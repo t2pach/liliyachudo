@@ -3,6 +3,15 @@ import { ChevronDown, Check, X, ArrowDown } from 'lucide-react';
 import { services, iconMap } from '@/mock';
 import type { Service } from '@/mock';
 
+// Scroll to element with delay
+const scrollToElement = (element: HTMLElement | null) => {
+  if (element) {
+    setTimeout(() => {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+  }
+};
+
 const ServiceCard = ({ 
   service, 
   isActive, 
@@ -71,13 +80,9 @@ const ServiceDetail = ({
   const IconComponent = iconMap[service.icon];
   const featuresRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to features section when component mounts
+  // Scroll to features section when component mounts or when details are shown
   useEffect(() => {
-    if (featuresRef.current) {
-      setTimeout(() => {
-        featuresRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
-    }
+    scrollToElement(featuresRef.current);
   }, []);
 
   return (
@@ -190,6 +195,13 @@ const Services = () => {
     const newActiveId = activeService === id ? null : id;
     setActiveService(newActiveId);
   };
+
+  // Scroll to detail when service is activated
+  useEffect(() => {
+    if (activeService !== null) {
+      scrollToElement(detailRef.current);
+    }
+  }, [activeService]);
 
   const activeServiceData = activeService !== null 
     ? services.find(s => s.id === activeService) 
